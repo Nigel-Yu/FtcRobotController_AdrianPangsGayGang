@@ -17,7 +17,6 @@ public class TeleOp_v1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Project1Hardware robot = new Project1Hardware();
 
-        Gamepad gamepad1 = new Gamepad();
 
         robot.init(hardwareMap, telemetry);
 
