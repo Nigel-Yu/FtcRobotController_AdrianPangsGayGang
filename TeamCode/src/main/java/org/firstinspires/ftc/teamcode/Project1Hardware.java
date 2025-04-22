@@ -20,14 +20,14 @@ public class Project1Hardware {
 //        BL = hardwareMap.get(DcMotor.class, "BL");
 //        BR = hardwareMap.get(DcMotor.class, "BR");
         claw = hardwareMap.get(Servo.class, "claw");
-        clawYaw = hardwareMap.get(Servo.class, "clawPitch");
+        clawYaw = hardwareMap.get(Servo.class, "clawYaw");
         imu = hardwareMap.get(IMU.class, "imu");
 
         this.telemetry = telemetry;
     }
 
     public void reset() {
-
+        claw.setDirection(Servo.Direction.FORWARD);
     }
 
     public void clawOpen() {
