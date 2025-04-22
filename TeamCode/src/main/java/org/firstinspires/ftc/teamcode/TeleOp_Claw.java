@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Claw Control", group = "TeleOp")
 class ClawControl extends OpMode {
     private Servo clawServo;
-    private static final double OPEN_POSITION = 0.9;
-    private static final double CLOSE_POSITION = 0.1;
+    private static final double OPEN_POSITION = 0;
+    private static final double CLOSE_POSITION = .2;
 
     @Override
     public void init() {

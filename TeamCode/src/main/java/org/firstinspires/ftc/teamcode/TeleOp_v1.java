@@ -21,10 +21,22 @@ public class TeleOp_v1 extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            direction_y = gamepad.left_stick_y;
-            direction_x = -gamepad.left_stick_x;
-            pivot = gamepad.right_stick_x * 0.8;
-            heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//            direction_y = gamepad.left_stick_y;
+//            direction_x = -gamepad.left_stick_x;
+//            pivot = gamepad.right_stick_x * 0.8;
+//            heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            if (gamepad.right_bumper) {
+                robot.clawClose();
+            } else if (gamepad.left_bumper) {
+                robot.clawOpen();
+            }
+
+            if (gamepad.circle) {
+                robot.setScoringPos(0);
+            } else if (gamepad.square) {
+                robot.setScoringPos(1);
+            }
         }
     }
 }
