@@ -12,7 +12,7 @@ public class TeleOp_v1 extends LinearOpMode {
 
     double direction_y, direction_x, pivot, heading;
 
-
+// Pang Yik Chun gooned to his house on Google Earth
     @Override
     public void runOpMode() throws InterruptedException {
         Project1Hardware robot = new Project1Hardware();
