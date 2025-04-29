@@ -15,6 +15,10 @@ public class TeleOp_v1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Project1Hardware robot = new Project1Hardware();
 
+        // TODO: find optimal offset
+        double yOffset = 0.5;
+        double xOffset = 0.5;
+        double rxOffset = 0.5;
 
         robot.init(hardwareMap, telemetry);
         robot.reset();
@@ -28,10 +32,6 @@ public class TeleOp_v1 extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            // TODO: move up and find optimal offset
-            double yOffset = 0.5;
-            double xOffset = 0.5;
-            double rxOffset = 0.5;
 
             double y = -gamepad1.left_stick_y * yOffset;
             double x = gamepad1.left_stick_x * xOffset;
