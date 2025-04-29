@@ -10,8 +10,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 public class TeleOp_v1 extends LinearOpMode {
 
-    double direction_y, direction_x, pivot, heading;
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,8 +17,10 @@ public class TeleOp_v1 extends LinearOpMode {
 
 
         robot.init(hardwareMap, telemetry);
+        robot.reset();
 
-        robot.clawOpen();
+//        robot.clawOpen();
+//        robot.setIntakePos(3);
 
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -28,22 +28,60 @@ public class TeleOp_v1 extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-//            direction_y = gamepad.left_stick_y;
-//            direction_x = -gamepad.left_stick_x;
-//            pivot = gamepad.right_stick_x * 0.8;
-//            heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            // TODO: move up and find optimal offset
+            double yOffset = 0.5;
+            double xOffset = 0.5;
+            double rxOffset = 0.5;
 
-            if (gamepad1.right_bumper) {
-                robot.clawClose();
-            } else if (gamepad1.left_bumper) {
-                robot.clawOpen();
+            double y = -gamepad1.left_stick_y * yOffset;
+            double x = gamepad1.left_stick_x * xOffset;
+            double rx = gamepad1.right_stick_x * rxOffset;
+
+            double heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            double rotX = x * Math.cos(-heading) - y * Math.sin(-heading);
+            double rotY = x * Math.sin(-heading) + y * Math.cos(-heading);
+
+            //rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            robot.FL.setPower((rotY + rotX + rx) / denominator);
+            robot.BL.setPower((rotY - rotX + rx) / denominator);
+            robot.FR.setPower((rotY - rotX - rx) / denominator);
+            robot.BR.setPower((rotY + rotX - rx) / denominator);
+
+            if (gamepad1.options) {
+                robot.reset();
             }
 
-            if (gamepad1.circle) {
-                robot.setScoringPos(0);
-            } else if (gamepad1.square) {
-                robot.setScoringPos(1);
-            }
+
+
+
+//            if (gamepad1.right_bumper) {
+//                robot.clawClose();
+//            } else if (gamepad1.left_bumper) {
+//                robot.clawOpen();
+//            }
+//
+//            if (gamepad1.circle) {
+//                robot.setScoringPos(0);
+//            } else if (gamepad1.square) {
+//                robot.setScoringPos(1);
+//            }
+//
+//            if (gamepad1.triangle) {
+//                robot.setIntakePos(0);
+//            } else if (gamepad1.cross) {
+//                robot.setIntakePos(1);
+//            }
+//
+//            if (gamepad1.dpad_down) {
+//                robot.setIntakeSpeed(0);
+//            } else if (gamepad1.dpad_right) {
+//                robot.setIntakeSpeed(1);
+//            } else if (gamepad1.dpad_left) {
+//                robot.setIntakeSpeed(2);
+//            }
         }
     }
 }
