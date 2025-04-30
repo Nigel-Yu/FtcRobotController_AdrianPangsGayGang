@@ -20,6 +20,7 @@ public class Project1Hardware {
 
     Telemetry telemetry;
 
+    int intakeSpeed = 0;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         FL = hardwareMap.get(DcMotor.class, "FL");
@@ -53,6 +54,9 @@ public class Project1Hardware {
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        horizSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        vertSlider.setDirection(DcMotorSimple.Direction.FORWARD);
 
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -109,19 +113,22 @@ public class Project1Hardware {
     }
 
 
-    public void setIntakeSpeed(int dir) {
-        switch (dir) {
+    public void setIntakeSpeed() {
+        switch (intakeSpeed) {
             case 0: // stop
                 rollerL.setPower(0);
                 rollerR.setPower(0);
+                intakeSpeed = 0;
                 break;
             case 1: // in
                 rollerL.setPower(1);
                 rollerR.setPower(1);
+                intakeSpeed = 1;
                 break;
             case 2: // out
                 rollerL.setPower(-1);
                 rollerR.setPower(-1);
+                intakeSpeed = 2;
         }
     }
 
@@ -172,6 +179,12 @@ public class Project1Hardware {
                 break;
             case 2: // scoring mid
                 clawClose();
+                setClawPitch(0);
+                setArm(0);
+                setVertSlider(1,0);
+                break;
+            case 3: // idle
+                clawOpen();
                 setClawPitch(0);
                 setArm(0);
                 setVertSlider(1,0);

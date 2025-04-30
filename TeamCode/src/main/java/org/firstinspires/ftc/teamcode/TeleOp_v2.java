@@ -29,12 +29,10 @@ public class TeleOp_v2 extends LinearOpMode {
         double xOffset = 0.5;
         double rxOffset = 0.5;
 
-
         Gamepad pastGamepad = new Gamepad();
 
         ElapsedTime Timer1 = new ElapsedTime();
 
-        int intakeSpeed = 0;
 
         states state = states.IDLE;
 
@@ -42,6 +40,7 @@ public class TeleOp_v2 extends LinearOpMode {
         robot.reset();
 
         robot.clawOpen();
+        robot.setScoringPos(0);
         robot.setIntakePos(3);
 
         telemetry.addData("status", "initialized");
@@ -50,9 +49,9 @@ public class TeleOp_v2 extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             pastGamepad.copy(gamepad1);
 
+            // drivetrain
             double y = -gamepad1.left_stick_y * yOffset;
             double x = gamepad1.left_stick_x * xOffset;
             double rx = gamepad1.right_stick_x * rxOffset;
@@ -74,29 +73,43 @@ public class TeleOp_v2 extends LinearOpMode {
                 robot.reset();
             }
 
+            robot.setIntakeSpeed();
+
             // idle
             if (state == states.IDLE) {
                 robot.clawOpen();
                 robot.setScoringPos(0);
-                robot.setIntakeSpeed(0);
+                robot.intakeSpeed = 0;
                 robot.setIntakePos(4);
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
                     robot.setIntakePos(0);
-                    robot.setIntakeSpeed(1);
+                    robot.intakeSpeed = 1;
                     state = states.INTAKE;
                 }
 
                 // intake
             } else if (state == states.INTAKE) {
+                // TODO: find optimal offset
                 xOffset = 0.5;
                 yOffset = 0.5;
                 rxOffset = 0.5;
-                if ((gamepad1.right_trigger > 0.2) && !(pastGamepad.right_trigger > 0.2)) {
-                    robot.setIntakeSpeed(1);
-                } else if (gamepad1.left_trigger > 0.2 && !(pastGamepad.left_trigger > 0.2)) {
-                    robot.setIntakeSpeed(2);
+                if (gamepad1.right_trigger > 0.2) {
+                    robot.intakeSpeed = 1;
+                } else if (gamepad1.left_trigger > 0.2) {
+                    robot.intakeSpeed = 2;
+                } else if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
+                    robot.intakeSpeed = 0;
                 }
+
+                if (gamepad1.square) {
+                    robot.setIntakePos(0);
+                } else if (gamepad1.cross) {
+                    robot.setIntakePos(1);
+                } else if (gamepad1.circle) {
+                    robot.setIntakePos(2);
+                }
+
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
                     robot.setIntakePos(3);
@@ -112,14 +125,19 @@ public class TeleOp_v2 extends LinearOpMode {
             } else if (state == states.TRANSFER) {
                 if (Timer1.milliseconds() > 0) {
                     robot.setScoringPos(1);
-                    robot.setIntakeSpeed(2);
+                    robot.intakeSpeed = 2;
                     state = states.SCORING;
                 }
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
-                    robot.setIntakeSpeed(1);
+                    robot.intakeSpeed = 0;
+                    robot.setScoringPos(1);
+                    robot.setIntakePos(4);
                     state = states.SCORING;
                 } else if (gamepad1.left_bumper && !pastGamepad.left_bumper) {
+                    robot.intakeSpeed = 1;
+                    robot.setIntakePos(3);
+                    robot.setScoringPos(0);
                     state = states.INTAKE;
                 }
 
@@ -129,6 +147,12 @@ public class TeleOp_v2 extends LinearOpMode {
                     robot.clawOpen();
                 } else if (gamepad1.left_trigger > 0.2) {
                     robot.clawClose();
+                }
+
+                if (gamepad1.cross) {
+                    robot.setScoringPos(2);
+                } else if (gamepad1.circle) {
+                    robot.setScoringPos(1);
                 }
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
