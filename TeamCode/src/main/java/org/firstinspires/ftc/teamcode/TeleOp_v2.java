@@ -40,8 +40,9 @@ public class TeleOp_v2 extends LinearOpMode {
         robot.reset();
 
         robot.clawOpen();
-        robot.setScoringPos(0);
-        robot.setIntakePos(3);
+        robot.setScoringPos("idle");
+        robot.setIntakePos("idle");
+        robot.intakeSpeed = 0;
 
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -78,12 +79,12 @@ public class TeleOp_v2 extends LinearOpMode {
             // idle
             if (state == states.IDLE) {
                 robot.clawOpen();
-                robot.setScoringPos(0);
+                robot.setScoringPos("idle");
+                robot.setIntakePos("idle");
                 robot.intakeSpeed = 0;
-                robot.setIntakePos(4);
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
-                    robot.setIntakePos(0);
+                    robot.setIntakePos("close");
                     robot.intakeSpeed = 1;
                     state = states.INTAKE;
                 }
@@ -98,46 +99,47 @@ public class TeleOp_v2 extends LinearOpMode {
                     robot.intakeSpeed = 1;
                 } else if (gamepad1.left_trigger > 0.2) {
                     robot.intakeSpeed = 2;
-                } else if (gamepad1.left_stick_button && gamepad1.right_stick_button) {
+                } else if (gamepad1.dpad_down) { // failsafe
                     robot.intakeSpeed = 0;
                 }
 
-                if (gamepad1.square) {
-                    robot.setIntakePos(0);
-                } else if (gamepad1.cross) {
-                    robot.setIntakePos(1);
-                } else if (gamepad1.circle) {
-                    robot.setIntakePos(2);
+                if (gamepad1.square) { //X
+                    robot.setIntakePos("close");
+                } else if (gamepad1.cross) { //A
+                    robot.setIntakePos("mid");
+                } else if (gamepad1.circle) { //B
+                    robot.setIntakePos("far");
                 }
 
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
-                    robot.setIntakePos(3);
-                    robot.setScoringPos(0);
+                    robot.setIntakePos("transfer");
+                    robot.setScoringPos("transfer");
                     Timer1.reset();
                     state = states.TRANSFER;
-
                 } else if (gamepad1.left_bumper && !pastGamepad.left_bumper) {
                     state = states.IDLE;
                 }
 
                 // transfer
             } else if (state == states.TRANSFER) {
-                if (Timer1.milliseconds() > 0) {
-                    robot.setScoringPos(1);
+                if (Timer1.milliseconds() > 50) {
+                    robot.clawClose();
                     robot.intakeSpeed = 2;
+                    robot.setScoringPos("scoring");
                     state = states.SCORING;
                 }
 
+                // failsafe
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
                     robot.intakeSpeed = 0;
-                    robot.setScoringPos(1);
-                    robot.setIntakePos(4);
+                    robot.setScoringPos("scoring");
+                    robot.setIntakePos("idle");
                     state = states.SCORING;
                 } else if (gamepad1.left_bumper && !pastGamepad.left_bumper) {
                     robot.intakeSpeed = 1;
-                    robot.setIntakePos(3);
-                    robot.setScoringPos(0);
+                    robot.setIntakePos("close");
+                    robot.setScoringPos("idle");
                     state = states.INTAKE;
                 }
 
@@ -145,26 +147,25 @@ public class TeleOp_v2 extends LinearOpMode {
             } else if (state == states.SCORING) {
                 if (gamepad1.right_trigger > 0.2) {
                     robot.clawOpen();
-                } else if (gamepad1.left_trigger > 0.2) {
+                } else if (gamepad1.left_trigger > 0.2) { // failsafe
                     robot.clawClose();
                 }
 
-                if (gamepad1.cross) {
-                    robot.setScoringPos(2);
-                } else if (gamepad1.circle) {
-                    robot.setScoringPos(1);
+                if (gamepad1.cross) { //A
+                    robot.setScoringPos("low");
+                } else if (gamepad1.circle) { //B
+                    robot.setScoringPos("high");
                 }
 
                 if (gamepad1.right_bumper && !pastGamepad.right_bumper) {
                     state = states.IDLE;
-                } else if (gamepad1.left_bumper && !pastGamepad.left_bumper) {
-                    state = states.TRANSFER;
                 }
             }
 
             telemetry.addData("state", state);
             telemetry.addData("horizSlider", robot.horizSlider.getCurrentPosition());
             telemetry.addData("vertSlider", robot.vertSlider.getCurrentPosition());
+            telemetry.addData("intakeSpeed", robot.intakeSpeed);
 
             telemetry.update();
         }

@@ -55,8 +55,8 @@ public class Project1Hardware {
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        horizSlider.setDirection(DcMotorSimple.Direction.FORWARD);
-        vertSlider.setDirection(DcMotorSimple.Direction.FORWARD);
+        horizSlider.setDirection(DcMotorSimple.Direction.REVERSE);
+        vertSlider.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -74,9 +74,12 @@ public class Project1Hardware {
 
         rollerL.setDirection(CRServo.Direction.FORWARD);
         rollerR.setDirection(CRServo.Direction.REVERSE);
-
         intakePitchL.setDirection(Servo.Direction.FORWARD);
         intakePitchR.setDirection(Servo.Direction.REVERSE);
+        armL.setDirection(Servo.Direction.FORWARD);
+        armR.setDirection(Servo.Direction.REVERSE);
+        clawPitchL.setDirection(Servo.Direction.FORWARD);
+        clawPitchR.setDirection(Servo.Direction.REVERSE);
 
         imu.resetYaw();
     }
@@ -132,30 +135,30 @@ public class Project1Hardware {
         }
     }
 
-
-    public void setIntakePos(int pos) {
+    // TODO: find horizSlider pos
+    public void setIntakePos(String pos) {
         switch (pos) {
-            case 0: // intake close
+            case "close": // intake close
                 intakePitchL.setPosition(0.67);
                 intakePitchR.setPosition(0.67);
                 setHorizSlider(1,0);
                 break;
-            case 1: // intake mid
+            case "mid": // intake mid
                 intakePitchL.setPosition(0.67);
                 intakePitchR.setPosition(0.67);
                 setHorizSlider(1,0);
                 break;
-            case 2: // intake far
+            case "far": // intake far
                 intakePitchL.setPosition(0.67);
                 intakePitchR.setPosition(0.67);
                 setHorizSlider(1,0);
                 break;
-            case 3: // transfer
+            case "transfer": // transfer
                 // TODO: find transfer pos
                 intakePitchL.setPosition(0);
                 intakePitchR.setPosition(0);
                 setHorizSlider(1,0);
-            case 4: // idle
+            case "idle": // idle
                 intakePitchL.setPosition(0);
                 intakePitchR.setPosition(0);
                 setHorizSlider(1,0);
@@ -163,27 +166,27 @@ public class Project1Hardware {
     }
 
     // TODO: find scoring pos
-    public void setScoringPos(int pos) {
+    public void setScoringPos(String pos) {
         switch (pos) {
-            case 0: // transfer
+            case "transfer": // transfer
                 clawOpen();
                 setClawPitch(0);
                 setArm(0);
                 setVertSlider(1,0);
                 break;
-            case 1: // scoring high
+            case "high": // scoring high
                 clawClose();
                 setClawPitch(0);
                 setArm(0);
                 setVertSlider(1,0);
                 break;
-            case 2: // scoring mid
+            case "mid": // scoring mid
                 clawClose();
                 setClawPitch(0);
                 setArm(0);
                 setVertSlider(1,0);
                 break;
-            case 3: // idle
+            case "idle": // idle
                 clawOpen();
                 setClawPitch(0);
                 setArm(0);
